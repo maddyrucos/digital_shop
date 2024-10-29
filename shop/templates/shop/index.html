@@ -1,0 +1,21 @@
+{% extends "shop/layout.html" %}
+{% load static %}
+
+{% block title %}
+    <title>Store</title>
+{% endblock %}
+
+{% block content %}
+    <body>
+        <div class="products">
+            {% for product in last_products %}
+            <div class="product">
+                <img src="{{ product.photo.url }}"><br>
+                <h3>{{ product.name }}</h3>
+                <p>Стоимость: {{ product.cost }} руб.</p>
+                <a class="buy-button" href="{% url 'buy_product' product.id %}">Купить</a>
+            </div>
+            {% endfor %}
+        </div>
+    </body>
+{% endblock %}
