@@ -1,8 +1,12 @@
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from django.db import models
+from PIL import Image
 
-class User(models.Model):
-	user_id = models.IntegerField(primary_key=True,  verbose_name='Telegram ID')
-	username = models.CharField(blank=True, verbose_name='Telegram Username', max_length=20)
+class UserProfile(models.Model):
+	user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
+	tg_id = models.IntegerField(blank=True, null=True)
+	tg_username = models.CharField(blank=True, null=True, verbose_name='Telegram Username', max_length=20)
 	name = models.CharField(max_length=20 ,blank=True, verbose_name='Имя')
 	balance = models.FloatField(default=0, verbose_name='Баланс')
 	date_of_registration = models.DateField(auto_now_add=True)
@@ -14,18 +18,16 @@ class User(models.Model):
 		verbose_name_plural='Пользователи'
 
 	def __str__(self):
-		return str(self.username)
+		return str(self.user.username)
 
 
 class Category(models.Model):
-	path = models.CharField(verbose_name='Категория', max_length=100)
+    name = models.CharField(max_length=255)
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='children', on_delete=models.CASCADE)
 
-	class Meta:
-		verbose_name='Категория'
-		verbose_name_plural='Категории'
+    def __str__(self):
+        return str(self.name)
 
-	def __str__(self):
-		return str(self.path)
 
 
 class Product(models.Model):
@@ -33,8 +35,8 @@ class Product(models.Model):
 	is_active = models.BooleanField(default=True, verbose_name='Включен')
 	cost = models.IntegerField(verbose_name='Цена')
 	description = models.TextField(verbose_name='Описание')
-	categories = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Категория')
-	photo = models.ImageField(verbose_name='Фото', upload_to='products/')
+	category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Категория')
+	image = models.ImageField(verbose_name='Фото', upload_to='products/')
 	is_counted = models.BooleanField(default=False, verbose_name='Несколько')
 	successful_payment_answer = models.ManyToManyField('Good', verbose_name='После оплаты')
 	date_added = models.DateField(auto_now_add=True)
@@ -42,6 +44,16 @@ class Product(models.Model):
 	class Meta:
 		verbose_name='Товар'
 		verbose_name_plural='Товары'
+
+	def save(self, *args, **kwargs):
+		super().save(*args, **kwargs)
+
+		img = Image.open(self.image.path)
+
+		if img.height > 600 or img.width > 600:
+			output_size = (600, 600)
+			img = img.resize(output_size)
+			img.save(self.image.path)
 
 	def __str__(self):
 		return str(self.name)

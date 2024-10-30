@@ -7,8 +7,19 @@
 
 {% block content %}
     <div class="catalog">
-        {% for category in categories %}
-            <a href="{% url 'catalog_path' category %}" style="color: black;">{{ category }}</a>
-        {% endfor %}
+        <ul>
+            {% for category in categories %}
+                <li>
+                    <a href="{% url 'category' category.id %}" style="color: black;">{{ category.name }}</a>
+                    {% if category.children.all %}
+                        <ul>
+                            {% for child in category.children.all %}
+                                <li><a href="{% url 'category' child.id %}">{{ child.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
     </div>
 {% endblock %}

@@ -1,15 +1,17 @@
-{% extends "shop/layout.html" %}
-{% load static %}
-
-{% block title %}
-    <title>Store</title>
-{% endblock %}
+{% extends 'shop/index.html' %}
 
 {% block content %}
-    <body>
-    <p> Balance: ${{ user.userprofile.balance }} </p>
+    <h1>{{ category.name }}</h1>
+    {% if subcategories %}
+        <ul>
+            {% for subcategory in subcategories %}
+                <li><a href="{% url 'category' subcategory.id %}">{{ subcategory.name }}</a></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if products %}
         <div class="products">
-            {% for product in last_products %}
+            {% for product in products %}
             <div class="product">
                 <img src="{{ product.image.url }}"><br>
                 <h3>{{ product.name }}</h3>
@@ -18,5 +20,5 @@
             </div>
             {% endfor %}
         </div>
-    </body>
+    {% endif %}
 {% endblock %}

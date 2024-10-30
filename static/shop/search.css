@@ -10,6 +10,7 @@
     position: absolute;
     background-color: #61b15a;
     color: #fff;
+    margin: 24px 0;
     padding: 10px;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);

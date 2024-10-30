@@ -27,8 +27,8 @@ def product_buy(request, product_id):
     return JsonResponse(context)
 
 
-def catalog(request, path=''):
-    if path:
+def catalog(request):
+    '''if path:
         categories = Category.objects.filter(path__istartswith=path)
         categories_path = [category['path'].split('_') for category in categories]
         context = { 'categories': categories_path, 'first': False }
@@ -36,8 +36,16 @@ def catalog(request, path=''):
         categories = Category.objects.all().values('path')
         categories_path = [category['path'] for category in categories]
         context = { 'categories': categories_path, 'first': True }
-    return render(request, 'shop/catalog.html', context=context)
+    return render(request, 'shop/catalog.html', context=context)'''
+    categories = Category.objects.filter(parent=None)
+    return render(request, 'shop/catalog.html', { 'categories': categories })
 
+
+def category(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    products = Product.objects.filter(category=category)
+    subcategories = category.children.all()
+    return render(request, 'shop/category.html', {'category': category, 'products': products, 'subcategories': subcategories, 'user': request.user })
 
 def search(request):
     query=request.GET.get('q')
