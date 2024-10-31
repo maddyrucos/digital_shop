@@ -28,15 +28,6 @@ def product_buy(request, product_id):
 
 
 def catalog(request):
-    '''if path:
-        categories = Category.objects.filter(path__istartswith=path)
-        categories_path = [category['path'].split('_') for category in categories]
-        context = { 'categories': categories_path, 'first': False }
-    else:
-        categories = Category.objects.all().values('path')
-        categories_path = [category['path'] for category in categories]
-        context = { 'categories': categories_path, 'first': True }
-    return render(request, 'shop/catalog.html', context=context)'''
     categories = Category.objects.filter(parent=None)
     return render(request, 'shop/catalog.html', { 'categories': categories })
 

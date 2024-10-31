@@ -3,13 +3,19 @@ body {
     color: #black;
     margin: 0;
     padding: 0;
+    background-image: url('../images/heis.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
 }
 
 main {
     margin: 0 auto;
     padding: 20px;
     width: 60%;
+    height: 100%;
     border: solid 1px;
+    background-color: white;
 }
 
 header {
