@@ -10,9 +10,9 @@
         <div class="products">
             {% for product in last_products %}
             <div class="product">
-                <img src="{{ product.image.url }}"><br>
-                <h3>{{ product.name }}</h3>
-                <p>Стоимость: {{ product.cost }} руб.</p>
+                <a href="{% url 'product' product.id %}"><img src="{{ product.image.url }}"></a><br>
+                <h3><a href="{% url 'product' product.id %}">{{ product.name }}</a></h3>
+                <p>Стоимость: {{ product.price }} руб.</p>
                 <a class="buy-button" href="{% url 'buy_product' product.id %}">Купить</a>
             </div>
             {% endfor %}

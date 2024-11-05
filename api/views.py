@@ -5,14 +5,15 @@ from django.db.models import Q
 from rest_framework.status import HTTP_404_NOT_FOUND, HTTP_204_NO_CONTENT, HTTP_405_METHOD_NOT_ALLOWED
 from rest_framework.utils.representation import serializer_repr
 
-from shop.models import Product, Good, Sale
-from api.serializers import ProductSerializer, GoodSerializer, SaleSerializer
+from shop.models import Product, Content, Sale
+from api.serializers import ProductSerializer, ContentSerializer, SaleSerializer
 
 
 @api_view(['GET'])
 def api_products(request):
     if request.method == 'GET':
-        products = Product.objects.all()
+        q = (Q(is_active=True) & Q(content__isnull=False))
+        products = Product.objects.filter(q)
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
     else:
@@ -50,20 +51,20 @@ def api_sales_detail(request, sale_id):
 
 
 @api_view(['GET'])
-def api_goods(request):
+def api_content(request):
     if request.method == 'GET':
-        goods = Good.objects.all()
-        serializer = GoodSerializer(goods, many=True)
+        content = Content.objects.all()
+        serializer = ContentSerializer(content, many=True)
         return Response(serializer.data)
     else:
         return Response(request, status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 @api_view(['GET'])
-def api_goods_detail(request, good_id):
-    goods = Product.objects.get(good_id)
+def api_content_detail(request, content):
+    content = Product.objects.get(content)
     if request.method == 'GET':
-        serializer = GoodSerializer(goods)
+        serializer = Content(content)
         return Response(serializer.data)
     else:
         return Response(status=HTTP_405_METHOD_NOT_ALLOWED)

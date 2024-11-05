@@ -1,5 +1,5 @@
 from rest_framework import serializers, viewsets
-from shop.models import Product, Good, Sale
+from shop.models import Product, Content, Sale
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -7,9 +7,9 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class GoodSerializer(serializers.ModelSerializer):
+class ContentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Good
+        model = Content
         fields = '__all__'
 
 

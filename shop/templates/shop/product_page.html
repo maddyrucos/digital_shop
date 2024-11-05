@@ -2,9 +2,10 @@
 {% load static %}
 
 {% block title %}
-    <title>{{ product.id }}</title>
+    <title>{{ product.name }}</title>
 {% endblock %}
 
 {% block content %}
-
+    <p>{{ product.name }}</p>
+    <p>{{ product.description }}</p>
 {% endblock %}

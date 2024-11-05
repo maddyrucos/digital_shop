@@ -1,14 +1,15 @@
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
 from django.db import models
 from PIL import Image
+from django.dispatch import receiver
 
 class UserProfile(models.Model):
-	user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
+	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	tg_id = models.IntegerField(blank=True, null=True)
 	tg_username = models.CharField(blank=True, null=True, verbose_name='Telegram Username', max_length=20)
-	name = models.CharField(max_length=20 ,blank=True, verbose_name='Имя')
-	balance = models.FloatField(default=0, verbose_name='Баланс')
+	name = models.CharField(max_length=20, blank=True, verbose_name='Имя')
+	balance = models.IntegerField(default=0, verbose_name='Баланс')
 	date_of_registration = models.DateField(auto_now_add=True)
 	sales = models.ManyToManyField('Sale', related_name='sales', verbose_name='Покупки', blank=True)
 	payments = models.ManyToManyField('Payment', related_name='payments', verbose_name='Платежи', blank=True)
@@ -19,6 +20,14 @@ class UserProfile(models.Model):
 
 	def __str__(self):
 		return str(self.user.username)
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+	''' Connects the user model with userprofile models '''
+	if created:
+		UserProfile.objects.create(user=instance)
+
+post_save.connect(create_user_profile, sender=User)
 
 
 class Category(models.Model):
@@ -33,12 +42,12 @@ class Category(models.Model):
 class Product(models.Model):
 	name = models.CharField(verbose_name='Название товара', max_length=100)
 	is_active = models.BooleanField(default=True, verbose_name='Включен')
-	cost = models.IntegerField(verbose_name='Цена')
+	price = models.IntegerField(verbose_name='Цена')
 	description = models.TextField(verbose_name='Описание')
 	category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Категория')
 	image = models.ImageField(verbose_name='Фото', upload_to='products/')
-	is_counted = models.BooleanField(default=False, verbose_name='Несколько')
-	successful_payment_answer = models.ManyToManyField('Good', verbose_name='После оплаты')
+	is_multiple = models.BooleanField(default=False, verbose_name='Несколько')
+	content = models.ManyToManyField('Content', verbose_name='После оплаты', related_name='answer')
 	date_added = models.DateField(auto_now_add=True)
 
 	class Meta:
@@ -46,10 +55,9 @@ class Product(models.Model):
 		verbose_name_plural='Товары'
 
 	def save(self, *args, **kwargs):
+		''' Makes all the images in same size '''
 		super().save(*args, **kwargs)
-
 		img = Image.open(self.image.path)
-
 		if img.height > 600 or img.width > 600:
 			output_size = (600, 600)
 			img = img.resize(output_size)
@@ -59,9 +67,10 @@ class Product(models.Model):
 		return str(self.name)
 
 
-class Good(models.Model):
+class Content(models.Model):
 	is_unlimited = models.BooleanField(default=False, verbose_name='Бесконечный')
 	data = models.TextField(verbose_name='Содержимое')
+	product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='parent')
 
 	class Meta:
 		verbose_name='Содержимое'
