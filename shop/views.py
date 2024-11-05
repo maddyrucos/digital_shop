@@ -52,7 +52,7 @@ def category(request, category_id):
 
 def search(request):
     query=request.GET.get('q')
-    results = Product.objects.filter(name__icontains=query).values('id', 'name', 'cost')
+    results = Product.objects.filter(name__icontains=query).values('id', 'name', 'price')
     return JsonResponse({'results': list(results)})
 
 
