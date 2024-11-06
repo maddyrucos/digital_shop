@@ -6,13 +6,16 @@
 {% endblock %}
 
 {% block content %}
+    <head>
+        <link href="{% static 'shop/catalog.css' %}" type="text/css" rel="stylesheet">
+    </head>
     <div class="catalog">
         <ul>
             {% for category in categories %}
-                <li>
-                    <a href="{% url 'category' category.id %}" style="color: black;">{{ category.name }}</a>
+                <li class="category">
+                    <a href="{% url 'category' category.id %}">{{ category.name }}</a>
                     {% if category.children.all %}
-                        <ul>
+                        <ul class="subcategories">
                             {% for child in category.children.all %}
                                 <li><a href="{% url 'category' child.id %}">{{ child.name }}</a></li>
                             {% endfor %}

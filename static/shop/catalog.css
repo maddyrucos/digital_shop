@@ -1,0 +1,44 @@
+.catalog {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.catalog ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.catalog li {
+    margin-bottom: 10px;
+}
+
+.catalog a {
+    text-decoration: none;
+    color: #28a745;
+    font-weight: bold;
+    transition: color 0.2s ease-in-out;
+}
+
+.catalog a:hover {
+    color: #177e34;
+}
+
+.subcategories {
+    margin-left: 20px;
+}
+
+.subcategories li {
+    margin-bottom: 5px;
+}
+
+.subcategories a {
+    font-size: 0.9em;
+    color: #6c757d;
+}
+
+.subcategories a:hover {
+    color: #495057;
+}
