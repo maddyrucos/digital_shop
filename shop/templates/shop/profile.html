@@ -4,4 +4,16 @@
 {% endblock %}
 
 {% block content %}
+    <body>
+        <h3>{{ user.username }}</h3>
+        <p>Количество покупок: {{ sales.count }}</p>
+        {% for sale in sales %}
+            <p>{{ sale.product }}</p>
+            <p>{{ sale.content }}</p>
+        {% endfor %}
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Выйти</button>
+        </form>
+    </body>
 {% endblock %}

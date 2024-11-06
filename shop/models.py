@@ -31,11 +31,22 @@ post_save.connect(create_user_profile, sender=User)
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=255)
-    parent = models.ForeignKey('self', null=True, blank=True, related_name='children', on_delete=models.CASCADE)
+	name = models.CharField(max_length=255)
+	parent = models.ForeignKey('self', null=True, blank=True, related_name='children', on_delete=models.CASCADE)
 
-    def __str__(self):
-        return str(self.name)
+	def get_full_path(self):
+		''' Displays full path (all parents) in admin '''
+		if self.parent:
+			return f'{str(self.parent.get_full_path())}->{str(self.name)}'
+		else:
+			return str(self.name)
+
+	def __str__(self):
+		return self.get_full_path()
+
+	class Meta:
+		verbose_name='Категория'
+		verbose_name_plural='Категории'
 
 
 
@@ -70,7 +81,6 @@ class Product(models.Model):
 class Content(models.Model):
 	is_unlimited = models.BooleanField(default=False, verbose_name='Бесконечный')
 	data = models.TextField(verbose_name='Содержимое')
-	product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='parent')
 
 	class Meta:
 		verbose_name='Содержимое'
@@ -99,9 +109,10 @@ class Payment(models.Model):
 class Sale(models.Model):
 	customer = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Покупатель')
 	product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Товар')
-	count = models.FloatField(verbose_name='Количество')
-	cost = models.FloatField(verbose_name='Стоимость')
+	count = models.IntegerField(verbose_name='Количество')
+	total_cost = models.IntegerField(verbose_name='Стоимость')
 	date = models.DateField(auto_now=True, verbose_name='Дата')
+	content = models.TextField(default='Error')
 	status = models.CharField(choices=[('waiting', 'waiting'), ('paid', 'paid'), ('canceled', 'canceled')], max_length=10, verbose_name='Статус')
 
 	class Meta:
@@ -109,4 +120,4 @@ class Sale(models.Model):
 		verbose_name_plural='Покупки'
 
 	def __str__(self):
-		return str(self.id)
+		return f'{self.id} - {self.product} - {self.customer} - {self.total_cost} - {self.status}'
